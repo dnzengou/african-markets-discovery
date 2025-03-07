@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeds of Bravery: African Market Discovery</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+        }
+        .slide-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: transparent;
+            overflow-y: auto;
+        }
+        .slide {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            transition: background 0.5s ease;
+        }
+        .slide h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .slide ul {
+            text-align: left;
+            font-size: 1.2rem;
+            list-style-type: none;
+            padding: 0;
+        }
+        .slide li {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #f0f0f0;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .media-container {
+            max-width: 100%;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .media-container img, .media-container video {
+            max-width: 100%;
+            height: auto;
+        }
+        .progress-bar {
+            height: 5px;
+            background-color: #007bff;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        .overview {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow: auto;
+            padding: 2rem;
+        }
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .overview-slide {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .overview-slide:hover {
+            transform: scale(1.05);
+        }
+        .overview-slide h3 {
+            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+        }
+        .close-overview {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div id="slide" class="slide"></div>
+        <div class="navigation">
+            <span id="slide-number"></span>
+            <div class="nav-buttons">
+                <button id="prev-btn">Previous</button>
+                <button id="next-btn">Next</button>
+                <button id="overview-btn">Overview</button>
+            </div>
+        </div>
+    </div>
+    <div id="overview" class="overview">
+        <div class="close-overview" id="close-overview">×</div>
+        <div class="overview-grid" id="overview-grid"></div>
+    </div>
+
+    <script>
+        const slides = [
+            {
+                title: "Exploring African Markets: Rwanda, Kenya, Nigeria for Ukrainian Startups",
+                content: [
+                    "Seeds of Bravery Webinar – Market Discovery Workshop",
+                    "Date: March 12, 2025 | 10:00–12:30 CET",
+                    "Presented by: [Your Name], Powered by Plug and Play & xAI"
+                ],
+                background: "linear-gradient(to right, #3b82f6, #8b5cf6)"
+            },
+            {
+                title: "Introduction",
+                content: [
+                    "Context: The Seeds of Bravery programme (€20M EU-funded) supports Ukrainian founders in scaling globally.",
+                    "Today: Explore African markets—Rwanda, Kenya, Nigeria—as opportunities for expansion.",
+                    "Objective: Equip you with insights on business climates, innovation ecosystems, and strategies to enter these markets frictionlessly.",
+                    "Duration: 20 minutes – key data, tech focus, operations, and strategic alignment."
+                ],
+                background: "#fee2e2"
+            },
+            {
+                title: "Countries in Numbers",
+                content: [
+                    "Rwanda: Doing Business Rank 38th | GDP $13.3B | 8.2% growth | Pop. 13.7M | Internet ~50%, 90% 4G",
+                    "Kenya: Doing Business Rank 56th | GDP $113B | 5.3–5.5% growth | Pop. ~50M | Internet 85.2%",
+                    "Nigeria: Doing Business Rank 131st | GDP $477B | Pop. ~219M | Internet ~75%, 43.5% broadband",
+                    "Takeaway: Rwanda excels in ease, Kenya in tech, Nigeria in scale."
+                ],
+                background: "#dcfce7",
+                media: {
+                    type: "image",
+                    url: "https://example.com/africa-map.jpg" // Replace with actual map image URL
+                }
+            },
+            {
+                title: "Innovation & Technology Focus",
+                content: [
+                    "Rwanda: ICT hub, fintech, healthtech (e.g., Zipline), smart cities (Kigali Innovation City).",
+                    "Kenya: Fintech (M-Pesa), climate tech, e-commerce, agritech, edtech.",
+                    "Nigeria: Fintech (Paystack), e-commerce, digital health, edtech.",
+                    "Shared: Fintech backbone, climate tech, mobile-first solutions."
+                ],
+                background: "#fef9c3"
+            },
+            {
+                title: "Operative Mode – Delivering Tech Innovation",
+                content: [
+                    "Rwanda: Government-led (RDB), tech hubs, 4G, PPPs, tax incentives.",
+                    "Kenya: Startup ecosystem (iHub), private funding, mobile broadband, Vision 2030.",
+                    "Nigeria: Private-led (Yaba), NITDA support, mobile market, talent pool."
+                ],
+                background: "#e0e7ff"
+            },
+            {
+                title: "Vision, Strategy, and Alignment for Founders",
+                content: [
+                    "Rwanda: Vision 2050 – ICT hub, lenient visas, partner with RDB.",
+                    "Kenya: Vision 2030 – Digital superhighway, tap startup hubs.",
+                    "Nigeria: No unified vision – Leverage scale, local partnerships.",
+                    "Tips: Pilot in Rwanda/Kenya, scale in Nigeria with allies."
+                ],
+                background: "#f3e8ff",
+                media: {
+                    type: "image",
+                    url: "https://example.com/strategy-diagram.jpg" // Replace with actual diagram URL
+                }
+            },
+            {
+                title: "Key Industries & Investment Opportunities",
+                content: [
+                    "Rwanda: ICT, tourism, mining, healthtech.",
+                    "Kenya: Fintech, agritech, renewable energy, e-commerce.",
+                    "Nigeria: Fintech, digital health, e-commerce, agriculture.",
+                    "Cross-Market: Fintech for financial inclusion."
+                ],
+                background: "#dbeafe"
+            },
+            {
+                title: "Government Support for International Founders",
+                content: [
+                    "Rwanda: Lenient visas, tax exemptions, Kigali IFC.",
+                    "Kenya: Startup incentives, US-Kenya STIP, AmCham.",
+                    "Nigeria: NITDA OIIE, SMEDAN grants, inconsistent policies."
+                ],
+                background: "#ccfbf1"
+            },
+            {
+                title: "Conclusion & Call to Action",
+                content: [
+                    "Summary: Rwanda (ease), Kenya (innovation), Nigeria (scale).",
+                    "Next Steps: Research partners, pilot in Rwanda/Kenya, scale in Nigeria.",
+                    "Contact: Plug and Play team for tailored support."
+                ],
+                background: "#ffedd5"
+            },
+            {
+                title: "Q&A",
+                content: [
+                    "Prompt: What’s your target market or tech focus?",
+                    "Let’s discuss how Rwanda, Kenya, or Nigeria fits your expansion plans!"
+                ],
+                background: "#fce7f3"
+            }
+        ];
+
+        let currentSlide = 0;
+        const slideElement = document.getElementById('slide');
+        const slideNumberElement = document.getElementById('slide-number');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const overviewBtn = document.getElementById('overview-btn');
+        const overviewElement = document.getElementById('overview');
+        const overviewGridElement = document.getElementById('overview-grid');
+        const closeOverviewBtn = document.getElementById('close-overview');
+        const progressBar = document.getElementById('progress-bar');
+
+        function updateSlide() {
+            const slide = slides[currentSlide];
+            if (slideElement) {
+                slideElement.style.background = slide.background;
+            }
+          
+            let content = `<h2>${slide.title}</h2>`;
+          
+            if (slide.media) {
+                content += `<div class="media-container">`;
+                if (slide.media.type === "image") {
+                    content += `<img src="${slide.media.url}" alt="${slide.title}">`;
+                } else if (slide.media.type === "video") {
+                    content += `<video controls><source src="${slide.media.url}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                }
+                content += `</div>`;
+            }
+
+            content += Array.isArray(slide.content) 
+                ? `<ul>${slide.content.map(item => `<li>${item}</li>`).join('')}</ul>`
+                : `<p>${slide.content}</p>`;
+
+            if (slideElement) {
+                slideElement.innerHTML = content;
+            }
+
+            if (slideNumberElement) {
+                slideNumberElement.textContent = `Slide ${currentSlide + 1} of ${slides.length}`;
+            }
+
+            if (progressBar) {
+                progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+            }
+
+            setTimeout(() => {
+                const header = slideElement ? slideElement.querySelector('h2') : null;
+                if (header) {
+                    header.style.opacity = '1';
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                const listItems = slideElement ? slideElement.querySelectorAll('li') : [];
+                listItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    }, index * 100);
+                });
+
+                const mediaContainer = slideElement ? slideElement.querySelector('.media-container') : null;
+                if (mediaContainer) {
+                    mediaContainer.style.opacity = '1';
+                    mediaContainer.style.transform = 'scale(1)';
+                }
+            }, 50);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide();
+            closeOverview();
+        }
+
+        function showOverview() {
+            overviewElement.style.display = 'block';
+            overviewGridElement.innerHTML = slides.map((slide, index) => `
+                <div class="overview-slide" onclick="goToSlide(${index})">
+                    <h3>${slide.title}</h3>
+                    <div style="font-size: 0.8rem;">${Array.isArray(slide.content) ? slide.content[0] : slide.content}</div>
+                </div>
+            `).join('');
+        }
+
+        function closeOverview() {
+            overviewElement.style.display = 'none';
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlide();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlide();
+        });
+
+        overviewBtn.addEventListener('click', showOverview);
+        closeOverviewBtn.addEventListener('click', closeOverview);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                nextBtn.click();
+            } else if (e.key === 'Escape') {
+                closeOverview();
+            }
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>
